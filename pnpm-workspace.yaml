@@ -1,0 +1,10 @@
+packages:
+  - packages/*
+  - apps/*
+  - infra/*
+  - deploy/*
+  - '!**/test/**'
+
+catalog:
+  kysely: 0.28.8
+  pg: 8.16.3

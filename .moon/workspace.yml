@@ -1,0 +1,23 @@
+# https://moonrepo.dev/docs/config/workspace
+$schema: './cache/schemas/workspace.json'
+
+# extends: './shared/workspace.yml'
+
+projects:
+  - 'apps/*'
+  - 'packages/*'
+
+
+# Configures the version control system to utilize within the workspace. A VCS
+# is required for determining touched (added, modified, etc) files, calculating file hashes,
+# computing affected files, and much more.
+vcs:
+  # The client to use when managing the repository.
+  # Accepts "git". Defaults to "git".
+  manager: 'git'
+
+  # The default branch (master/main/trunk) in the repository for comparing the
+  # local branch against. For git, this is is typically "master" or "main",
+  # and must include the remote prefix (before /).
+  defaultBranch: 'main'
+  provider: github

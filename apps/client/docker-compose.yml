@@ -1,0 +1,63 @@
+services:
+  eloquent-image:
+    build:
+      context: ../..
+      dockerfile: Dockerfile.testing
+  app-db:
+    image: postgres:18
+    command: postgres -c work_mem=8000
+    restart: always
+    environment:
+      - POSTGRES_USER=db_user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=eloquent_db
+    ports:
+      - '5433:5432'
+    healthcheck:
+      interval: 10s
+      retries: 5
+      test:
+        - CMD-SHELL
+        - pg_isready
+      timeout: 5s
+    shm_size: 1gb
+
+  migrate:
+    image: eloquent-image
+    depends_on:
+      app-db:
+        condition: service_started
+      eloquent-image:
+        condition: service_completed_successfully
+    volumes:
+      - ../../:/app
+    working_dir: /app/apps/migrator
+    command: pnpm run migrate
+    environment:
+      - DB_HOST=app-db
+      - DB_PORT=5432
+      - DB_USER=db_user
+      - DB_PASSWORD=password
+      - DB_NAME=eloquent_db
+
+  server:
+    image: eloquent-image
+    depends_on:
+      app-db:
+        condition: service_started
+      eloquent-image:
+        condition: service_completed_successfully
+      migrate:
+        condition: service_completed_successfully
+    ports:
+      - '3000:3000'
+    volumes:
+      - ../../:/app
+    working_dir: /app/apps/client
+    command: pnpm run dev
+    environment:
+      - DB_HOST=app-db
+      - DB_PORT=5432
+      - DB_USER=db_user
+      - DB_PASSWORD=password
+      - DB_NAME=eloquent_db

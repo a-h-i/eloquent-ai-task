@@ -1,0 +1,23 @@
+@import "tailwindcss";
+
+:root {
+    color-scheme: dark;
+}
+
+
+@theme {
+    --color-bg: #0b0f17;
+    --color-bg-soft: #101826;
+    --color-bg-softer: #0f1724;
+    --color-panel: #0f172a;
+}
+
+@theme inline {
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+
+body {
+  @apply bg-bg text-white antialiased;
+}
