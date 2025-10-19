@@ -2,7 +2,6 @@ $schema: 'https://moonrepo.dev/schemas/project.json'
 language: 'typescript'
 type: application
 
-
 fileGroups:
   configs:
     - 'package.json'
@@ -10,7 +9,6 @@ fileGroups:
     - 'eslint.config.mjs'
   sources:
     - 'src/**/*.{ts,tsx}'
-
 
 tasks:
   build:

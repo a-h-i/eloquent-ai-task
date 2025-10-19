@@ -1,8 +1,6 @@
 import { defineConfig } from 'eslint/config';
 import tseslint from 'typescript-eslint';
 
-
-
 export default defineConfig([
   tseslint.configs.strict,
   tseslint.configs.stylistic,
@@ -24,8 +22,8 @@ export default defineConfig([
         },
       ],
     },
-  }, {
+  },
+  {
     ignores: ['node_modules/**', 'dist/**'],
-  }
-  ]
-)
+  },
+]);

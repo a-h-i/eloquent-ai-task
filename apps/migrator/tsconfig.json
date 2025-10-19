@@ -13,8 +13,7 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "moduleResolution": "nodenext",
-    "module": "ESNext",
-
+    "module": "NodeNext"
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules", "dist"]
