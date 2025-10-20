@@ -1,0 +1,9 @@
+# Caches
+.*_cache/
+
+# Git
+.git/
+
+# Python
+.moon/cache
+.venv
