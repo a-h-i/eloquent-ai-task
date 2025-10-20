@@ -25,6 +25,8 @@ tasks:
   dev:
     command: docker compose up --remove-orphans server
     local: true
+    deps:
+      - 'migrator:build'
   build:
     command: pnpm run build
     inputs:

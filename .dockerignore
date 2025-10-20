@@ -6,4 +6,6 @@
 
 # Python
 .moon/cache
-.venv
+.venv/
+.next/
+dist/

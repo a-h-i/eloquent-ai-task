@@ -8,27 +8,36 @@
     "start": "next start",
     "lint": "eslint",
     "format": "prettier . --write",
-    "format:check": "prettier . --check"
+    "format:check": "prettier . --check",
+    "schema:generate": "kysely-codegen --out-file ./lib/db/schema.d.ts"
   },
   "dependencies": {
+    "@hookform/resolvers": "^5.2.2",
     "@reduxjs/toolkit": "^2.9.1",
+    "argon2": "^0.44.0",
+    "clsx": "^2.1.1",
+    "jose": "^6.1.0",
     "kysely": "catalog:",
     "next": "15.5.6",
     "pg": "catalog:",
     "react": "19.1.0",
     "react-dom": "19.1.0",
-    "react-redux": "^9.2.0"
+    "react-hook-form": "^7.65.0",
+    "react-redux": "^9.2.0",
+    "zod": "^4.1.12"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@next/eslint-plugin-next": "^15.5.6",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
+    "@types/pg": "catalog:",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "15.5.6",
     "eslint-plugin-react-hooks": "^7.0.0",
+    "kysely-codegen": "^0.19.0",
     "prettier": "^3.6.2",
     "prettier-plugin-tailwindcss": "^0.7.1",
     "tailwindcss": "^4",

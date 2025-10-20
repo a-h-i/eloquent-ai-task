@@ -3,6 +3,7 @@ services:
     build:
       context: ../..
       dockerfile: Dockerfile.testing
+    image: eloquent-image
   app-db:
     image: postgres:18
     command: postgres -c work_mem=8000
@@ -26,7 +27,7 @@ services:
     image: eloquent-image
     depends_on:
       app-db:
-        condition: service_started
+        condition: service_healthy
       eloquent-image:
         condition: service_completed_successfully
     volumes:
@@ -44,7 +45,7 @@ services:
     image: eloquent-image
     depends_on:
       app-db:
-        condition: service_started
+        condition: service_healthy
       eloquent-image:
         condition: service_completed_successfully
       migrate:
@@ -53,8 +54,10 @@ services:
       - '3000:3000'
     volumes:
       - ../../:/app
+      - ../../docker-cache/client/.next:/app/apps/client/.next
     working_dir: /app/apps/client
     command: pnpm run dev
+
     environment:
       - DB_HOST=app-db
       - DB_PORT=5432

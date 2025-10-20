@@ -6,3 +6,4 @@
 dist/
 .next/
 node_modules/
+docker-cache/
