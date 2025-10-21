@@ -11,6 +11,13 @@ fileGroups:
     - 'src/**/*.{ts,tsx}'
 
 tasks:
+  install:
+    command: pnpm install
+    inputs:
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+    outputs:
+      - 'node_modules'
   build:
     command: pnpm run build
     inputs:
@@ -18,6 +25,8 @@ tasks:
       - '@files(sources)'
     outputs:
       - 'dist'
+    deps:
+      - 'install'
   lint:
     command: pnpm run lint
     inputs:

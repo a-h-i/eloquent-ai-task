@@ -27,6 +27,14 @@ tasks:
     local: true
     deps:
       - 'migrator:build'
+      - 'install'
+  install:
+    command: pnpm install
+    inputs:
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+    outputs:
+      - 'node_modules'
   build:
     command: pnpm run build
     inputs:
@@ -34,6 +42,8 @@ tasks:
       - '@files(sources)'
     outputs:
       - '.next'
+    deps:
+      - 'install'
   prod:
     command: pnpm run start
     deps:
