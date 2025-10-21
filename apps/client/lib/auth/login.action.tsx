@@ -4,6 +4,7 @@ import { z } from 'zod';
 import createDb from '@/lib/db/db';
 import argon from 'argon2';
 import createToken from '@/lib/auth/createToken';
+import { redirect } from 'next/navigation';
 
 const loginSchema = z.object({
   username: z.string().min(3),
@@ -52,8 +53,6 @@ export default async function loginAction(
   }
 
   await createToken(profile);
+  redirect('/');
 
-  return {
-    success: true,
-  };
 }

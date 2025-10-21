@@ -6,6 +6,8 @@ import { Message } from '@/lib/db/schema';
 import getMessages from '@/lib/conversation/getMessages.action';
 import { Selectable } from 'kysely';
 import ChatMessages from '@/lib/components/chat/ChatMessages';
+import { v4 as uuidv4 } from 'uuid';
+import ChatComposer from '@/lib/components/chat/ChatComposer';
 
 function NoConversationSelected() {
   return (
@@ -31,6 +33,17 @@ export default function ChatWindow() {
     return <NoConversationSelected />;
   }
 
+  const onSend = (content: string) => {
+    setMessages((prev) => [...prev, {
+      content,
+      created_at: new Date(),
+      updated_at: new Date(),
+      author: 'user',
+      conversation_id: currentConversation.id,
+      id: uuidv4()
+    }])
+  }
+
   return (
     <main className='flex h-full flex-col'>
       <header className='flex items-center'>
@@ -39,6 +52,7 @@ export default function ChatWindow() {
         </h1>
       </header>
       <ChatMessages messages={messages} />
+      <ChatComposer onSend={onSend} />
     </main>
   );
 }

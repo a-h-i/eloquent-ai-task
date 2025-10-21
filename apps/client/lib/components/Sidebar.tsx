@@ -12,6 +12,8 @@ import clsx from 'clsx';
 import Link from 'next/link';
 import { Selectable } from 'kysely';
 import { Profile } from '@/lib/db/schema';
+import logoutAction from '@/lib/auth/logout.action';
+import { useRouter } from 'next/navigation';
 
 interface ISidebarProps {
   profile?: Selectable<Profile> | null;
@@ -21,6 +23,7 @@ export default function Sidebar(props: ISidebarProps) {
   const conversations = useAppSelector(selectConversations);
   const currentConversationId = useAppSelector(selectCurrentConversationId);
   const dispatch = useAppDispatch();
+  const router = useRouter();
 
   return (
     <aside className='bg-bg/60 h-full border-r border-zinc-800 backdrop-blur-sm'>
@@ -36,8 +39,18 @@ export default function Sidebar(props: ISidebarProps) {
         </div>
       )}
       {props.profile && (
-        <div className='flex items-center gap-2 border-b border-zinc-800 p-3'>
+        <div className='flex items-center justify-between gap-2 border-b border-zinc-800 p-3'>
           <p className='capitalize'>Hello {props.profile.name}</p>
+          <button
+          type='button'
+          className='rounded-xl bg-zinc-800 px-3 py-2 text-left font-medium transition hover:bg-zinc-700'
+          onClick={async () => {
+            await logoutAction();
+            router.refresh();
+          }}
+          >
+            Logout
+          </button>
         </div>
       )}
 
