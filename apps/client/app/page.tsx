@@ -1,10 +1,12 @@
 import Sidebar from '@/lib/components/Sidebar';
 import ChatWindow from '@/lib/components/chat/ChatWindow';
+import getCurrentProfile from '@/lib/auth/getCurrentProfile';
 
-export default function Page() {
+export default async function Page() {
+  const profile = await getCurrentProfile();
   return (
     <div className='grid h-screen grid-cols-[280px_1fr]'>
-      <Sidebar />
+      <Sidebar isGuest={profile == null} />
       <ChatWindow />
     </div>
   );

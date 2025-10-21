@@ -21,6 +21,7 @@ const registrationSchema = z
       .min(8, 'Password must be at least 8 characters')
       .max(128, 'Password must be at most 128 characters'),
     confirm: z.string(),
+    name: z.string().min(3, 'Name must be at least 3 characters'),
   })
   .refine((data) => data.password === data.confirm, {
     path: ['confirm'],
@@ -41,7 +42,7 @@ export default function RegisterPage() {
     resolver: zodResolver(registrationSchema),
     mode: 'all',
     reValidateMode: 'onChange',
-    defaultValues: { username: '', password: '', confirm: '' },
+    defaultValues: { username: '', password: '', confirm: '', name: '' },
   });
 
   const [showPassword, setShowPassword] = useState(false);
@@ -134,7 +135,7 @@ export default function RegisterPage() {
                 type='text'
                 autoComplete='username'
                 className='bg-bg-softer w-full rounded-lg border border-white/10 px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500/50'
-                placeholder='yourname'
+                placeholder='username'
                 {...register('username')}
               />
               <div className='mt-1 h-5'>
@@ -204,6 +205,20 @@ export default function RegisterPage() {
                   </p>
                 ) : null}
               </div>
+            </div>
+
+            <div>
+              <label htmlFor='name' className='mb-1 block text-sm'>
+                Name
+              </label>
+              <input
+                id='name'
+                type='text'
+                autoComplete='name'
+                className='bg-bg-softer w-full rounded-lg border border-white/10 px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500/50'
+                placeholder='your name'
+                {...register('name')}
+              />
             </div>
 
             <button

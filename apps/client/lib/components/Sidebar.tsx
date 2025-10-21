@@ -10,7 +10,11 @@ import {
 } from '@/lib/redux/store/conversations.slice';
 import clsx from 'clsx';
 
-export default function Sidebar() {
+interface ISidebarProps {
+  isGuest: boolean;
+}
+
+export default function Sidebar(props: ISidebarProps) {
   const conversations = useAppSelector(selectConversations);
   const currentConversationId = useAppSelector(selectCurrentConversationId);
   const dispatch = useAppDispatch();
