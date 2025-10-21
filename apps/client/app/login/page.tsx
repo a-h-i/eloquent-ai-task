@@ -1,4 +1,4 @@
-'use client'
+'use client';
 import Link from 'next/link';
 import { useActionState } from 'react';
 import loginAction from '@/lib/auth/login.action';

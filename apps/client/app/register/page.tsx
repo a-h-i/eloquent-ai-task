@@ -29,7 +29,6 @@ const registrationSchema = z
 
 type RegistrationSchemaType = z.infer<typeof registrationSchema>;
 
-
 export default function RegisterPage() {
   const {
     register,
@@ -59,7 +58,10 @@ export default function RegisterPage() {
       try {
         const exists = await isUsernameTakenAction(usernameValue);
         if (exists) {
-          setError('username', { type: 'validate', message: 'Username is already taken' });
+          setError('username', {
+            type: 'validate',
+            message: 'Username is already taken',
+          });
         } else if (errors.username?.type === 'validate') {
           clearErrors('username');
         }
@@ -78,11 +80,17 @@ export default function RegisterPage() {
   const onSubmit = handleSubmit(async (values) => {
     setServerMessage(null);
     try {
-      const res = await signupAction({ username: values.username.trim(), password: values.password });
+      const res = await signupAction({
+        username: values.username.trim(),
+        password: values.password,
+      });
       if (res.ok) {
         redirect('/');
       } else {
-        setError('root', { type: 'server', message: res.message || 'Registration failed' });
+        setError('root', {
+          type: 'server',
+          message: res.message || 'Registration failed',
+        });
       }
     } catch (e) {
       console.error('Error during signup:', e);
@@ -91,112 +99,126 @@ export default function RegisterPage() {
   });
 
   return (
-    <main className="min-h-[calc(100dvh-0px)] grid place-items-center px-4">
-      <div className="w-full max-w-md rounded-xl bg-panel/70 backdrop-blur border border-white/10 shadow-xl">
-        <div className="p-6 sm:p-8">
-          <h1 className="text-2xl font-semibold">Create your account</h1>
-          <p className="mt-1 text-sm text-white/70">
+    <main className='grid min-h-[calc(100dvh-0px)] place-items-center px-4'>
+      <div className='bg-panel/70 w-full max-w-md rounded-xl border border-white/10 shadow-xl backdrop-blur'>
+        <div className='p-6 sm:p-8'>
+          <h1 className='text-2xl font-semibold'>Create your account</h1>
+          <p className='mt-1 text-sm text-white/70'>
             Already have an account?{' '}
-            <Link href="/login" className="text-blue-400 hover:text-blue-300 underline underline-offset-4">
+            <Link
+              href='/login'
+              className='text-blue-400 underline underline-offset-4 hover:text-blue-300'
+            >
               Sign in
             </Link>
           </p>
 
-          <form onSubmit={onSubmit} className="mt-6 space-y-4" noValidate>
+          <form onSubmit={onSubmit} className='mt-6 space-y-4' noValidate>
             {serverMessage && (
-              <div className="rounded-md border border-emerald-500/50 bg-emerald-500/10 px-4 py-2 text-sm text-emerald-300">
+              <div className='rounded-md border border-emerald-500/50 bg-emerald-500/10 px-4 py-2 text-sm text-emerald-300'>
                 {serverMessage}
               </div>
             )}
             {errors.root?.message && (
-              <div className="rounded-md border border-red-500/50 bg-red-500/10 px-4 py-2 text-sm text-red-300">
+              <div className='rounded-md border border-red-500/50 bg-red-500/10 px-4 py-2 text-sm text-red-300'>
                 {errors.root.message}
               </div>
             )}
 
             <div>
-              <label htmlFor="username" className="block text-sm mb-1">
+              <label htmlFor='username' className='mb-1 block text-sm'>
                 Username
               </label>
               <input
-                id="username"
-                type="text"
-                autoComplete="username"
-                className="w-full rounded-lg bg-bg-softer border border-white/10 px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500/50"
-                placeholder="yourname"
+                id='username'
+                type='text'
+                autoComplete='username'
+                className='bg-bg-softer w-full rounded-lg border border-white/10 px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500/50'
+                placeholder='yourname'
                 {...register('username')}
               />
-              <div className="mt-1 h-5">
+              <div className='mt-1 h-5'>
                 {errors.username?.message ? (
-                  <p className="text-xs text-red-300">{errors.username.message}</p>
+                  <p className='text-xs text-red-300'>
+                    {errors.username.message}
+                  </p>
                 ) : isValidating ? (
-                  <p className="text-xs text-white/50">Checking availability…</p>
+                  <p className='text-xs text-white/50'>
+                    Checking availability…
+                  </p>
                 ) : null}
               </div>
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm mb-1">
+              <label htmlFor='password' className='mb-1 block text-sm'>
                 Password
               </label>
-              <div className="relative">
+              <div className='relative'>
                 <input
-                  id="password"
+                  id='password'
                   type={showPassword ? 'text' : 'password'}
-                  autoComplete="new-password"
-                  className="w-full rounded-lg bg-bg-softer border border-white/10 px-3 py-2 pr-10 outline-none focus:ring-2 focus:ring-blue-500/50"
-                  placeholder="••••••••"
+                  autoComplete='new-password'
+                  className='bg-bg-softer w-full rounded-lg border border-white/10 px-3 py-2 pr-10 outline-none focus:ring-2 focus:ring-blue-500/50'
+                  placeholder='••••••••'
                   {...register('password')}
                 />
                 <button
-                  type="button"
+                  type='button'
                   onClick={() => setShowPassword((s) => !s)}
-                  className="absolute inset-y-0 right-0 px-3 text-white/70 hover:text-white/90"
+                  className='absolute inset-y-0 right-0 px-3 text-white/70 hover:text-white/90'
                   aria-label={showPassword ? 'Hide password' : 'Show password'}
                 >
                   {showPassword ? 'Hide' : 'Show'}
                 </button>
               </div>
-              <div className="mt-1 h-5">
+              <div className='mt-1 h-5'>
                 {errors.password?.message ? (
-                  <p className="text-xs text-red-300">{errors.password.message}</p>
+                  <p className='text-xs text-red-300'>
+                    {errors.password.message}
+                  </p>
                 ) : (
-                  <p className="text-xs text-white/50">Use at least 8 characters.</p>
+                  <p className='text-xs text-white/50'>
+                    Use at least 8 characters.
+                  </p>
                 )}
               </div>
             </div>
 
             <div>
-              <label htmlFor="confirm" className="block text-sm mb-1">
+              <label htmlFor='confirm' className='mb-1 block text-sm'>
                 Confirm password
               </label>
               <input
-                id="confirm"
+                id='confirm'
                 type={showPassword ? 'text' : 'password'}
-                autoComplete="new-password"
-                className="w-full rounded-lg bg-bg-softer border border-white/10 px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500/50"
-                placeholder="••••••••"
+                autoComplete='new-password'
+                className='bg-bg-softer w-full rounded-lg border border-white/10 px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500/50'
+                placeholder='••••••••'
                 {...register('confirm')}
               />
-              <div className="mt-1 h-5">
+              <div className='mt-1 h-5'>
                 {errors.confirm?.message ? (
-                  <p className="text-xs text-red-300">{errors.confirm.message}</p>
+                  <p className='text-xs text-red-300'>
+                    {errors.confirm.message}
+                  </p>
                 ) : null}
               </div>
             </div>
 
             <button
-              type="submit"
+              type='submit'
               disabled={isSubmitting || !isValid}
-              className="w-full rounded-lg bg-blue-600 hover:bg-blue-500 disabled:opacity-60 disabled:cursor-not-allowed px-4 py-2 font-medium transition-colors"
+              className='w-full rounded-lg bg-blue-600 px-4 py-2 font-medium transition-colors hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-60'
             >
               {isSubmitting ? 'Creating account...' : 'Create account'}
             </button>
           </form>
 
-          <div className="mt-6">
-            <p className="text-xs text-white/50">
-              By creating an account, you agree to our Terms of Service and Privacy Policy.
+          <div className='mt-6'>
+            <p className='text-xs text-white/50'>
+              By creating an account, you agree to our Terms of Service and
+              Privacy Policy.
             </p>
           </div>
         </div>

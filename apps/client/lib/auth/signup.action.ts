@@ -1,4 +1,4 @@
-'use server'
+'use server';
 
 import createDb from '@/lib/db/db';
 import argon from 'argon2';
@@ -9,17 +9,22 @@ interface SignupActionProps {
   password: string;
 }
 
-type SignupActionResponse = {ok: true} | {ok: false, message: string};
+type SignupActionResponse = { ok: true } | { ok: false; message: string };
 
-export default async function signupAction(props: SignupActionProps): Promise<SignupActionResponse> {
+export default async function signupAction(
+  props: SignupActionProps,
+): Promise<SignupActionResponse> {
   const db = await createDb();
   const passwordHash = await argon.hash(props.password);
-  const profile = await db.insertInto('profile')
+  const profile = await db
+    .insertInto('profile')
     .values({
       username: props.username,
       name: props.username,
       password_hash: passwordHash,
-    }).returningAll().executeTakeFirst();
+    })
+    .returningAll()
+    .executeTakeFirst();
   if (!profile) {
     return {
       ok: false,
