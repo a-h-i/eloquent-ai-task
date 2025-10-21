@@ -3,10 +3,12 @@
 import createDb from '@/lib/db/db';
 import argon from 'argon2';
 import createToken from '@/lib/auth/createToken';
+import { registrationSchema } from '@/lib/schemas/registration.schema';
 
 interface SignupActionProps {
   username: string;
   password: string;
+  name: string;
 }
 
 type SignupActionResponse = { ok: true } | { ok: false; message: string };
@@ -14,13 +16,14 @@ type SignupActionResponse = { ok: true } | { ok: false; message: string };
 export default async function signupAction(
   props: SignupActionProps,
 ): Promise<SignupActionResponse> {
+  const values = registrationSchema.parse(props);
   const db = await createDb();
-  const passwordHash = await argon.hash(props.password);
+  const passwordHash = await argon.hash(values.password);
   const profile = await db
     .insertInto('profile')
     .values({
-      username: props.username,
-      name: props.username,
+      username: values.username,
+      name: values.name,
       password_hash: passwordHash,
     })
     .returningAll()

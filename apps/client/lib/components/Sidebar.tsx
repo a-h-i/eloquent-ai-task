@@ -9,9 +9,12 @@ import {
   setCurrentConversation,
 } from '@/lib/redux/store/conversations.slice';
 import clsx from 'clsx';
+import Link from 'next/link';
+import { Selectable } from 'kysely';
+import { Profile } from '@/lib/db/schema';
 
 interface ISidebarProps {
-  isGuest: boolean;
+  profile?: Selectable<Profile> | null;
 }
 
 export default function Sidebar(props: ISidebarProps) {
@@ -21,6 +24,23 @@ export default function Sidebar(props: ISidebarProps) {
 
   return (
     <aside className='bg-bg/60 h-full border-r border-zinc-800 backdrop-blur-sm'>
+      {props.profile == null && (
+        <div className='flex items-center gap-2 border-b border-zinc-800 p-3'>
+          <Link
+            type='button'
+            href='/login'
+            className='w-full rounded-xl bg-zinc-800 px-3 py-2 text-left font-medium transition hover:bg-zinc-700'
+          >
+            Login
+          </Link>
+        </div>
+      )}
+      {props.profile && (
+        <div className='flex items-center gap-2 border-b border-zinc-800 p-3'>
+          <p className='capitalize'>Hello {props.profile.name}</p>
+        </div>
+      )}
+
       <div className='flex items-center gap-2 border-b border-zinc-800 p-3'>
         <button
           type='button'

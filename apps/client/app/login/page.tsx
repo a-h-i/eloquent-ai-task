@@ -6,17 +6,17 @@ import loginAction from '@/lib/auth/login.action';
 export default function LoginPage() {
   const [formState, formAction, isPending] = useActionState(loginAction, {});
   return (
-    <main className='flex min-h-screen items-center justify-center bg-gray-50 px-4'>
+    <main className='flex min-h-screen items-center justify-center bg-bg/60 px-4'>
       <div className='w-full max-w-md'>
-        <div className='rounded-xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8'>
-          <h1 className='text-center text-2xl font-semibold text-gray-900'>
+        <div className='rounded-xl border border-zinc-800 bg-zinc-800 p-6 shadow-sm sm:p-8'>
+          <h1 className='text-center text-2xl font-semibold'>
             Sign in
           </h1>
-          <p className='mt-2 text-center text-sm text-gray-600'>
+          <p className='mt-2 text-center text-sm'>
             New here?{' '}
             <Link
               href='/register'
-              className='font-medium text-indigo-600 hover:text-indigo-700'
+              className='font-medium underline text-blue-400 hover:text-blue-300'
             >
               Create an account
             </Link>
@@ -26,7 +26,7 @@ export default function LoginPage() {
             <div>
               <label
                 htmlFor='username'
-                className='block text-sm font-medium text-gray-700'
+                className='block text-sm font-medium '
               >
                 Username
               </label>
@@ -36,7 +36,7 @@ export default function LoginPage() {
                 type='text'
                 autoComplete='username'
                 required
-                className='mt-1 block w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500 sm:text-sm'
+                className='bg-bg-softer w-full rounded-lg border border-white/10 px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500/50'
                 placeholder='username'
                 minLength={3}
               />
@@ -46,7 +46,7 @@ export default function LoginPage() {
               <div className='flex items-center justify-between'>
                 <label
                   htmlFor='password'
-                  className='block text-sm font-medium text-gray-700'
+                  className='block text-sm font-medium'
                 >
                   Password
                 </label>
@@ -57,7 +57,7 @@ export default function LoginPage() {
                 type='password'
                 autoComplete='current-password'
                 required
-                className='mt-1 block w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500 sm:text-sm'
+                className='bg-bg-softer w-full rounded-lg border border-white/10 px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500/50'
                 placeholder='••••••••'
                 minLength={6}
               />
@@ -73,7 +73,7 @@ export default function LoginPage() {
 
             <button
               type='submit'
-              className='inline-flex w-full items-center justify-center rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2'
+              className='inline-flex w-full items-center justify-center rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold shadow-sm hover:bg-blue-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2'
               disabled={isPending}
             >
               Sign in

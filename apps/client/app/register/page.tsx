@@ -3,32 +3,16 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import isUsernameTakenAction from '@/lib/auth/isUsernameTaken.action';
 import signupAction from '@/lib/auth/signup.action';
-import { redirect } from 'next/navigation';
+import { useRouter } from 'next/navigation';
+import {
+  registrationSchema,
+  RegistrationSchemaType,
+} from '@/lib/schemas/registration.schema';
 
-const registrationSchema = z
-  .object({
-    username: z
-      .string()
-      .min(3, 'Username must be at least 3 characters')
-      .max(30, 'Username must be at most 30 characters')
-      .regex(/^[a-zA-Z0-9_]+$/, 'Only letters, numbers and underscores'),
-    password: z
-      .string()
-      .min(8, 'Password must be at least 8 characters')
-      .max(128, 'Password must be at most 128 characters'),
-    confirm: z.string(),
-    name: z.string().min(3, 'Name must be at least 3 characters'),
-  })
-  .refine((data) => data.password === data.confirm, {
-    path: ['confirm'],
-    message: 'Passwords do not match',
-  });
 
-type RegistrationSchemaType = z.infer<typeof registrationSchema>;
 
 export default function RegisterPage() {
   const {
@@ -46,14 +30,12 @@ export default function RegisterPage() {
   });
 
   const [showPassword, setShowPassword] = useState(false);
-  const [serverMessage, setServerMessage] = useState<string | null>(null);
+  const router = useRouter();
 
   const usernameValue = watch('username');
 
   // Debounced username availability check
   useEffect(() => {
-    if (!usernameValue || errors.username?.type === 'too_small') return;
-
     const ctrl = new AbortController();
     const id = setTimeout(async () => {
       try {
@@ -79,14 +61,14 @@ export default function RegisterPage() {
   }, [usernameValue, setError, clearErrors, errors.username]);
 
   const onSubmit = handleSubmit(async (values) => {
-    setServerMessage(null);
     try {
       const res = await signupAction({
         username: values.username.trim(),
         password: values.password,
+        name: values.name.trim(),
       });
       if (res.ok) {
-        redirect('/');
+        router.push('/');
       } else {
         setError('root', {
           type: 'server',
@@ -115,11 +97,6 @@ export default function RegisterPage() {
           </p>
 
           <form onSubmit={onSubmit} className='mt-6 space-y-4' noValidate>
-            {serverMessage && (
-              <div className='rounded-md border border-emerald-500/50 bg-emerald-500/10 px-4 py-2 text-sm text-emerald-300'>
-                {serverMessage}
-              </div>
-            )}
             {errors.root?.message && (
               <div className='rounded-md border border-red-500/50 bg-red-500/10 px-4 py-2 text-sm text-red-300'>
                 {errors.root.message}
@@ -219,6 +196,13 @@ export default function RegisterPage() {
                 placeholder='your name'
                 {...register('name')}
               />
+              <div className='mt-1 h-5'>
+                {errors.name?.message && (
+                  <p className='text-xs text-red-300'>
+                    {errors.name.message}
+                  </p>
+                )}
+              </div>
             </div>
 
             <button

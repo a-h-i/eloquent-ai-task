@@ -6,7 +6,7 @@ export default async function Page() {
   const profile = await getCurrentProfile();
   return (
     <div className='grid h-screen grid-cols-[280px_1fr]'>
-      <Sidebar isGuest={profile == null} />
+      <Sidebar profile={profile} />
       <ChatWindow />
     </div>
   );
