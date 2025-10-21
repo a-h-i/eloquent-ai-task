@@ -12,8 +12,6 @@ import {
   RegistrationSchemaType,
 } from '@/lib/schemas/registration.schema';
 
-
-
 export default function RegisterPage() {
   const {
     register,
@@ -198,9 +196,7 @@ export default function RegisterPage() {
               />
               <div className='mt-1 h-5'>
                 {errors.name?.message && (
-                  <p className='text-xs text-red-300'>
-                    {errors.name.message}
-                  </p>
+                  <p className='text-xs text-red-300'>{errors.name.message}</p>
                 )}
               </div>
             </div>

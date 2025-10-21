@@ -42,12 +42,12 @@ export default function Sidebar(props: ISidebarProps) {
         <div className='flex items-center justify-between gap-2 border-b border-zinc-800 p-3'>
           <p className='capitalize'>Hello {props.profile.name}</p>
           <button
-          type='button'
-          className='rounded-xl bg-zinc-800 px-3 py-2 text-left font-medium transition hover:bg-zinc-700'
-          onClick={async () => {
-            await logoutAction();
-            router.refresh();
-          }}
+            type='button'
+            className='rounded-xl bg-zinc-800 px-3 py-2 text-left font-medium transition hover:bg-zinc-700'
+            onClick={async () => {
+              await logoutAction();
+              router.refresh();
+            }}
           >
             Logout
           </button>

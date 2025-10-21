@@ -54,5 +54,4 @@ export default async function loginAction(
 
   await createToken(profile);
   redirect('/');
-
 }

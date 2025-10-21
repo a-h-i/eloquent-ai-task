@@ -6,17 +6,15 @@ import loginAction from '@/lib/auth/login.action';
 export default function LoginPage() {
   const [formState, formAction, isPending] = useActionState(loginAction, {});
   return (
-    <main className='flex min-h-screen items-center justify-center bg-bg/60 px-4'>
+    <main className='bg-bg/60 flex min-h-screen items-center justify-center px-4'>
       <div className='w-full max-w-md'>
         <div className='rounded-xl border border-zinc-800 bg-zinc-800 p-6 shadow-sm sm:p-8'>
-          <h1 className='text-center text-2xl font-semibold'>
-            Sign in
-          </h1>
+          <h1 className='text-center text-2xl font-semibold'>Sign in</h1>
           <p className='mt-2 text-center text-sm'>
             New here?{' '}
             <Link
               href='/register'
-              className='font-medium underline text-blue-400 hover:text-blue-300'
+              className='font-medium text-blue-400 underline hover:text-blue-300'
             >
               Create an account
             </Link>
@@ -24,10 +22,7 @@ export default function LoginPage() {
 
           <form className='mt-6 space-y-4' action={formAction}>
             <div>
-              <label
-                htmlFor='username'
-                className='block text-sm font-medium '
-              >
+              <label htmlFor='username' className='block text-sm font-medium'>
                 Username
               </label>
               <input
@@ -44,10 +39,7 @@ export default function LoginPage() {
 
             <div>
               <div className='flex items-center justify-between'>
-                <label
-                  htmlFor='password'
-                  className='block text-sm font-medium'
-                >
+                <label htmlFor='password' className='block text-sm font-medium'>
                   Password
                 </label>
               </div>

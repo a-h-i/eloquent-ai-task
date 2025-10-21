@@ -1,5 +1,4 @@
-'use server'
-
+'use server';
 
 import { Selectable } from 'kysely';
 import { Profile } from '@/lib/db/schema';

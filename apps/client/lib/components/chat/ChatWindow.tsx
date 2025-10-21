@@ -34,15 +34,18 @@ export default function ChatWindow() {
   }
 
   const onSend = (content: string) => {
-    setMessages((prev) => [...prev, {
-      content,
-      created_at: new Date(),
-      updated_at: new Date(),
-      author: 'user',
-      conversation_id: currentConversation.id,
-      id: uuidv4()
-    }])
-  }
+    setMessages((prev) => [
+      ...prev,
+      {
+        content,
+        created_at: new Date(),
+        updated_at: new Date(),
+        author: 'user',
+        conversation_id: currentConversation.id,
+        id: uuidv4(),
+      },
+    ]);
+  };
 
   return (
     <main className='flex h-full flex-col'>
