@@ -1,10 +1,10 @@
 from contextlib import asynccontextmanager
 from typing import Annotated
 
-from fastapi import FastAPI, Depends
+from fastapi import Depends, FastAPI
 from psycopg import AsyncConnection
 
-from server.ai.db import pool, get_connection
+from server.ai.db import get_connection, pool
 from server.ai.graph import build_graph
 
 
@@ -21,7 +21,6 @@ app = FastAPI(
     description="API for interacting with a chatbot",
     version="0.1.0",
 )
-
 
 
 @app.get("/chatbot")

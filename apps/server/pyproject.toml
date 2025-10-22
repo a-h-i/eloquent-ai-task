@@ -45,7 +45,8 @@ select = [
     "ANN", # flake8-annotations
 ]
 ignore = [
-    "ANN401" # typing.Any
+    "ANN401", # typing.Any
+    "ANN201",
 ]
 exclude = ["tests/**", ".venv/**"]
 
