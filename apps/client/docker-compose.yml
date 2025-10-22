@@ -22,6 +22,22 @@ services:
         - pg_isready
       timeout: 5s
     shm_size: 1gb
+  ai-db:
+    image: postgres:18
+    command: postgres -c work_mem=8000
+    restart: always
+    environment:
+      - POSTGRES_USER=db_user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=eloquent_ai_db
+    healthcheck:
+      interval: 10s
+      retries: 5
+      test:
+        - CMD-SHELL
+        - pg_isready
+      timeout: 5s
+    shm_size: 1gb
 
   migrate:
     image: eloquent-image
@@ -41,6 +57,33 @@ services:
       - DB_PASSWORD=password
       - DB_NAME=eloquent_db
 
+  ai-server:
+    image: eloquent-image
+    depends_on:
+      ai-db:
+        condition: service_healthy
+      eloquent-image:
+        condition: service_completed_successfully
+    ports:
+      - '8000:8000'
+    volumes:
+      - ../../:/app
+      - ../../docker-cache/server/.venv:/app/apps/server/.venv
+    working_dir: /app/apps/server
+    command: >
+      bash -c "
+      poetry sync && 
+      poetry run fastapi dev src/server/main.py --host 0.0.0.0"
+    env_file:
+      - .env.backend
+    environment:
+      - DB_HOST=ai-db
+      - DB_PORT=5432
+      - DB_USER=db_user
+      - DB_PASSWORD=password
+      - DB_NAME=eloquent_ai_db
+      - OLLAMA_HOST=http://ollama:11434
+
   server:
     image: eloquent-image
     depends_on:
@@ -50,6 +93,8 @@ services:
         condition: service_completed_successfully
       migrate:
         condition: service_completed_successfully
+      ai-server:
+        condition: service_started
     ports:
       - '3000:3000'
     volumes:
