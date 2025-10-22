@@ -25,11 +25,7 @@ async def build_graph(connection: AsyncConnection[Any]):
 
 
 def get_model():
-    return init_chat_model(
-        model="gpt-5",
-        model_provider="openai",
-        temperature=0.4,
-    )
+    return init_chat_model(model="gpt-5", model_provider="openai", temperature=0.4, tags=["assistant"])
 
 
 def get_retriever():
@@ -41,20 +37,12 @@ def get_retriever():
 
 async def chatbot_node(state: State):
     model = get_model()
-    idx, embed = get_retriever()
-    relevant = idx.search_records(
-        query_vector=embed.embed_query(state.question),
-        top_k=5,
-    )
-    print(relevant)
+
     system_message = SystemMessage(
-        f"""
+        """
     You are a helpful assistant answering questions about the FAQ 
     of a fintech company regarding questions users might have about creating and verifying an account,
     managing payments and transfers, keeping their accounts secure and understanding financial regulations
-    
-    The following is a list of relevant information that may help you answer the user's question:
-    {relevant}
     """
     )
     response = await model.ainvoke([system_message] + state.messages)
