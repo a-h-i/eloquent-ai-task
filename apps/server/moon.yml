@@ -1,0 +1,45 @@
+$schema: 'https://moonrepo.dev/schemas/project.json'
+type: application
+language: python
+
+fileGroups:
+  config:
+    - 'pyproject.toml'
+    - 'poetry.toml'
+  src:
+    - 'src/**/*.py'
+    - 'alembic/**/*.py'
+
+tasks:
+  install:
+    command: poetry sync
+    inputs:
+      - '@files(config)'
+    outputs:
+      - '.venv'
+      - 'poetry.lock'
+  dev:
+    command: docker compose up --remove-orphans ai-server
+    local: true
+  lint:
+    script: poetry run ruff check
+    deps:
+      - 'install'
+    inputs:
+      - '@files(config)'
+      - '@files(src)'
+  formatCheck:
+    script: poetry run ruff format --check
+    deps:
+      - 'install'
+    inputs:
+      - '@files(config)'
+      - '@files(src)'
+  format:
+    script: poetry run ruff format
+    inputs:
+      - '@files(config)'
+      - '@files(src)'
+    deps:
+      - 'install'
+    local: true

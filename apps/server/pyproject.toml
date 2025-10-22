@@ -6,8 +6,19 @@ authors = [
     {name = "Ahmed Ismail",email = "ahm3d.hisham@gmail.com"}
 ]
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.11,<3.14"
 dependencies = [
+    "ruff (>=0.14.1,<0.15.0)",
+    "fastapi[standard] (>=0.119.1,<0.120.0)",
+    "langchain[openai] (>=1.0.1,<2.0.0)",
+    "langgraph (>=1.0.1,<2.0.0)",
+    "pydantic (>=2.12.3,<3.0.0)",
+    "psycopg[binary,pool] (>=3.2.11,<4.0.0)",
+    "langgraph-checkpoint-postgres (>=3.0.0,<4.0.0)",
+    "pydantic-settings (>=2.11.0,<3.0.0)",
+    "pinecone[asyncio,grpc] (>=7.3.0,<8.0.0)",
+    "langchain-community (>=0.4,<0.5)",
+    "langchain-ollama (>=1.0.0,<2.0.0)"
 ]
 
 [tool.poetry]
@@ -16,3 +27,38 @@ packages = [{include = "server", from = "src"}]
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+
+[tool.ruff]
+exclude = [".venv/**"]
+line-length = 110
+
+
+[tool.ruff.lint]
+select = [
+    "E", # pycodestyle
+    "F", # pyflakes
+    "I", # isort (imports)
+    "B", # flake8-bugbear
+    "UP", # pyupgrade
+    "C90", # mccabe complexity
+    "ANN", # flake8-annotations
+]
+ignore = [
+    "ANN401" # typing.Any
+]
+exclude = ["tests/**", ".venv/**"]
+
+
+[tool.ruff.lint.isort]
+known-first-party = ["api", "campaign_analyzer"]
+combine-as-imports = true
+
+[tool.ruff.lint.flake8-tidy-imports]
+# Disallow all relative imports.
+ban-relative-imports = "all"
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "lf"
