@@ -109,3 +109,4 @@ services:
       - DB_USER=db_user
       - DB_PASSWORD=password
       - DB_NAME=eloquent_db
+      - AI_BASE_URL=http://ai-server:8000
