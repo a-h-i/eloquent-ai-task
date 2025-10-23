@@ -11,7 +11,6 @@ export interface IConversation {
   updated_at: string;
   created_at: string;
 }
-
 export interface IConversationsState {
   conversations: IConversation[];
   currentConversationId?: string;

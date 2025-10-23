@@ -1,17 +1,20 @@
 'use client';
 import { selectCurrentConversation } from '@/lib/redux/store/conversations.slice';
 import { useAppSelector } from '@/lib/redux/hooks';
-import { startTransition, useEffect, useRef, useState } from 'react';
-import { Message } from '@/lib/db/schema';
+import { useEffect, useRef } from 'react';
 import getMessages from '@/lib/conversation/getMessages.action';
-import { Selectable } from 'kysely';
 import ChatMessages from '@/lib/components/chat/ChatMessages';
-import { v4 as uuidv4 } from 'uuid';
+
 import ChatComposer from '@/lib/components/chat/ChatComposer';
 import {
   assistantTokenSchema,
   decodeStreamChunk,
 } from '@/lib/conversation/decodeStreamChunk';
+import { useImmerReducer } from 'use-immer';
+import {
+  chatMessagesReducer,
+  ChatMessagesStatus,
+} from '@/lib/components/chat/reducer/chatMessagesReducer';
 
 function NoConversationSelected() {
   return (
@@ -26,15 +29,25 @@ function NoConversationSelected() {
 
 export default function ChatWindow() {
   const currentConversation = useAppSelector(selectCurrentConversation);
-  const [messages, setMessages] = useState<Selectable<Message>[]>([]);
-  const [isStreaming, setIsStreaming] = useState(false);
   const eventSourceRef = useRef<EventSource | null>(null);
-  const [streamChunks, setStreamChunks] = useState<string[]>([]);
+  const [streamingState, streamingDispatch] = useImmerReducer(
+    chatMessagesReducer,
+    {
+      messages: [],
+      streamChunks: [],
+      status: ChatMessagesStatus.IDLE,
+    },
+  );
 
   useEffect(() => {
     if (!currentConversation?.id) return;
-    getMessages(currentConversation.id).then(setMessages);
-  }, [currentConversation?.id]);
+    getMessages(currentConversation.id).then((messages) => {
+      streamingDispatch({
+        type: 'load_messages',
+        messages: messages,
+      });
+    });
+  }, [currentConversation?.id, streamingDispatch]);
 
   useEffect(() => {
     const eventSource = eventSourceRef.current;
@@ -48,21 +61,13 @@ export default function ChatWindow() {
   }
 
   const onSend = (content: string) => {
-    if (isStreaming) return;
-    setIsStreaming(true);
-    setStreamChunks([]);
-    setMessages((prev) => {
-      const now = new Date();
-      return prev.concat([
-        {
-          id: uuidv4(),
-          content,
-          created_at: now,
-          updated_at: now,
-          author: 'user',
-          conversation_id: currentConversation.id,
-        },
-      ]);
+    if (streamingState.status === ChatMessagesStatus.STREAMING) return;
+    streamingDispatch({
+      type: 'add_user_input',
+      input: content,
+    });
+    streamingDispatch({
+      type: 'stream_start',
     });
     const url = '/api/chat';
     const searchParams = new URLSearchParams();
@@ -72,37 +77,30 @@ export default function ChatWindow() {
     eventSourceRef.current = eventSource;
     eventSource.onmessage = (event) => {
       const decoded = decodeStreamChunk(event.data);
-      const streamedTokens: string[] = [];
       for (const chunk of decoded) {
         if (chunk.event === 'assistant_stream_start') {
+          streamingDispatch({
+            type: 'stream_start',
+          });
         } else if (chunk.event === 'assistant_token') {
           const parsed = assistantTokenSchema.parse(chunk);
-          streamedTokens.push(parsed.data);
+          streamingDispatch({
+            type: 'stream_chunk',
+            chunk: parsed.data,
+          });
         } else if (chunk.event === 'assistant_stream_end') {
-          startTransition(() => {
-            setIsStreaming(false);
-            setMessages((prev) => {
-              const now = new Date();
-              return prev.concat([
-                {
-                  id: uuidv4(),
-                  content: streamChunks.join('') + streamedTokens.join(''),
-                  created_at: now,
-                  updated_at: now,
-                  author: 'bot',
-                  conversation_id: currentConversation.id,
-                },
-              ]);
-            });
+          streamingDispatch({
+            type: 'stream_end',
           });
           eventSource.close();
         }
       }
-      setStreamChunks((prev) => prev.concat(streamedTokens));
     };
     eventSource.onerror = (error) => {
       console.error('EventSource failed:', error);
-      setIsStreaming(false);
+      streamingDispatch({
+        type: 'stream_error',
+      });
       eventSource.close();
     };
   };
@@ -115,11 +113,14 @@ export default function ChatWindow() {
         </h1>
       </header>
       <ChatMessages
-        messages={messages}
-        isStreaming={isStreaming}
-        streamChunks={streamChunks}
+        messages={streamingState.messages}
+        isStreaming={streamingState.status === ChatMessagesStatus.STREAMING}
+        streamChunks={streamingState.streamChunks}
       />
-      <ChatComposer onSend={onSend} disabled={isStreaming} />
+      <ChatComposer
+        onSend={onSend}
+        disabled={streamingState.status === ChatMessagesStatus.STREAMING}
+      />
     </main>
   );
 }
