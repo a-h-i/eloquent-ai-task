@@ -25,7 +25,13 @@ async def build_graph(connection: AsyncConnection[Any]):
 
 
 def get_model():
-    return init_chat_model(model="gpt-5", model_provider="openai", temperature=0.4, tags=["assistant"])
+    return init_chat_model(
+        model="llama2",
+        model_provider="ollama",
+        temperature=0.4,
+        tags=["assistant"],
+        base_url=settings.OLLAMA_HOST,
+    )
 
 
 def get_retriever():

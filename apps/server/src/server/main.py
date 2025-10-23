@@ -1,3 +1,4 @@
+import json
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 from typing import Annotated, Any
@@ -48,6 +49,9 @@ class ServerSentEvent(BaseModel):
 async def chatbot(thread_id: str, message: str, conn: Annotated[AsyncConnection, Depends(get_connection)]):
     async def stream_response() -> AsyncGenerator[bytes, Any]:
         graph = await build_graph(conn)
+        payload = {"event": "assistant_stream_start"}
+        sse = ServerSentEvent(data=json.dumps(payload))
+        yield sse.encode()
         async for message_chunk, metadata in graph.astream(
             {
                 "messages": [{"role": "user", "content": message}],
@@ -56,8 +60,12 @@ async def chatbot(thread_id: str, message: str, conn: Annotated[AsyncConnection,
             stream_mode="messages",
         ):
             if "assistant" in metadata["tags"]:
-                sse = ServerSentEvent(data=message_chunk.content)
+                payload = {"event": "assistant_token", "data": message_chunk.content}
+                sse = ServerSentEvent(data=json.dumps(payload))
                 yield sse.encode()
+        payload = {"event": "assistant_stream_end"}
+        sse = ServerSentEvent(data=json.dumps(payload))
+        yield sse.encode()
 
     return StreamingResponse(
         stream_response(),

@@ -64,6 +64,7 @@ export default function RegisterPage() {
         username: values.username.trim(),
         password: values.password,
         name: values.name.trim(),
+        confirm: values.confirm,
       });
       if (res.ok) {
         router.push('/');

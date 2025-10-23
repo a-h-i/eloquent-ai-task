@@ -4,6 +4,7 @@ import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks';
 import {
   createConversation,
   deleteConversation,
+  getConversations,
   selectConversations,
   selectCurrentConversationId,
   setCurrentConversation,
@@ -14,6 +15,7 @@ import { Selectable } from 'kysely';
 import { Profile } from '@/lib/db/schema';
 import logoutAction from '@/lib/auth/logout.action';
 import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 interface ISidebarProps {
   profile?: Selectable<Profile> | null;
@@ -24,6 +26,12 @@ export default function Sidebar(props: ISidebarProps) {
   const currentConversationId = useAppSelector(selectCurrentConversationId);
   const dispatch = useAppDispatch();
   const router = useRouter();
+
+  useEffect(() => {
+    if (props.profile != null) {
+      dispatch(getConversations());
+    }
+  }, [props.profile, dispatch]);
 
   return (
     <aside className='bg-bg/60 h-full border-r border-zinc-800 backdrop-blur-sm'>

@@ -3,6 +3,7 @@
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useEffect } from 'react';
 
 interface ChatComposerProps {
   onSend: (message: string) => void;
@@ -19,6 +20,7 @@ export default function ChatComposer(props: ChatComposerProps) {
     register,
     handleSubmit,
     formState: { isSubmitting, isValid },
+    setValue,
   } = useForm<ComposerSchemaType>({
     resolver: zodResolver(composerSchema),
     mode: 'all',
@@ -28,7 +30,22 @@ export default function ChatComposer(props: ChatComposerProps) {
   const onSubmit = handleSubmit((data) => {
     if (props.disabled) return;
     props.onSend(data.message);
+    setValue('message', '');
   });
+  useEffect(() => {
+    const listener = (event: KeyboardEvent) => {
+      if (event.key == 'Enter' && !event.shiftKey) {
+        event.preventDefault();
+        if (isValid) {
+          onSubmit().catch(console.error);
+        }
+      }
+    };
+    addEventListener('keypress', listener);
+    return () => {
+      removeEventListener('keypress', listener);
+    };
+  }, [onSubmit, isValid]);
 
   return (
     <form

@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AppDispatch, RootState } from '@/lib/redux/types';
 import createConversationAction from '@/lib/conversation/createConversation.action';
 import deleteConversationAction from '@/lib/conversation/deleteConversaion.action';
+import getConversationsAction from '@/lib/conversation/getConversations.action';
 
 export interface IConversation {
   id: string;
@@ -35,6 +36,21 @@ export const createConversation = createTypedAsyncThunk(
       created_at: conversation.created_at.toISOString(),
       updated_at: conversation.updated_at.toISOString(),
     };
+  },
+);
+
+export const getConversations = createTypedAsyncThunk(
+  'conversations/fetch',
+  async (): Promise<IConversation[]> => {
+    const conversations = await getConversationsAction();
+    return conversations.map(
+      (conversation): IConversation => ({
+        ...conversation,
+        created_at: conversation.created_at.toISOString(),
+        updated_at: conversation.updated_at.toISOString(),
+        isPersisted: true,
+      }),
+    );
   },
 );
 
@@ -77,6 +93,9 @@ export const conversationsSlice = createSlice({
             (c) => c.id !== conversationId,
           );
         }
+      })
+      .addCase(getConversations.fulfilled, (state, action) => {
+        state.conversations.push(...action.payload);
       });
   },
 });

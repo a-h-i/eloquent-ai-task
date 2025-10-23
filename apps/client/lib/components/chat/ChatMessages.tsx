@@ -6,9 +6,15 @@ import MessageBubble from '@/lib/components/chat/MessageBubble';
 
 interface ChatMessagesProps {
   messages: Selectable<Message>[];
+  isStreaming: boolean;
+  streamChunks: string[];
 }
 
-export default function ChatMessages({ messages }: ChatMessagesProps) {
+export default function ChatMessages({
+  messages,
+  isStreaming,
+  streamChunks,
+}: ChatMessagesProps) {
   const listRef = useRef<HTMLOListElement>(null);
   useEffect(() => {
     listRef.current?.scrollTo({
@@ -33,6 +39,17 @@ export default function ChatMessages({ messages }: ChatMessagesProps) {
           />
         </li>
       ))}
+      {isStreaming && <li className='flex items-start gap-4'>Thinking...</li>}
+
+      {isStreaming && (
+        <li className='flex items-start gap-4'>
+          <MessageBubble
+            key={streamChunks.length}
+            content={streamChunks.join('')}
+            author='bot'
+          />
+        </li>
+      )}
     </ol>
   );
 }

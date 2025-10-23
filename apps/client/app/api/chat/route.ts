@@ -6,10 +6,14 @@ import verifyToken from '@/lib/auth/verifyToken';
 import createDb from '@/lib/db/db';
 import { Kysely } from 'kysely';
 import { DB } from '@/lib/db/schema';
+import {
+  assistantTokenSchema,
+  decodeStreamChunk,
+} from '@/lib/conversation/decodeStreamChunk';
 
 const querySchema = z.object({
   message: z.string().min(1),
-  conversationId: z.uuid(),
+  conversation_id: z.uuid(),
 });
 
 export async function GET(req: NextRequest) {
@@ -29,7 +33,7 @@ export async function GET(req: NextRequest) {
   );
   const conversation = await db
     .selectFrom('conversation')
-    .where('id', '=', parsedQuery.conversationId)
+    .where('id', '=', parsedQuery.conversation_id)
     .selectAll()
     .executeTakeFirst();
   if (
@@ -46,7 +50,7 @@ export async function GET(req: NextRequest) {
 
   const url = new URL('/chatbot', baseAiUrl);
   url.searchParams.set('message', parsedQuery.message);
-  url.searchParams.set('thread_id', parsedQuery.conversationId);
+  url.searchParams.set('thread_id', parsedQuery.conversation_id);
   url.searchParams.set('is_guest', guest.toString());
 
   if (conversation != null) {
@@ -98,7 +102,12 @@ async function saveToDb(
   const tokens: string[] = [];
   for await (const chunk of generator()) {
     const decoded = decodeStreamChunk(chunk);
-    tokens.push(...decoded);
+    for (const event of decoded) {
+      if (event.event === 'assistant_token') {
+        const parsed = assistantTokenSchema.parse(event);
+        tokens.push(parsed.data);
+      }
+    }
   }
   await db
     .insertInto('message')
@@ -108,31 +117,6 @@ async function saveToDb(
       conversation_id: conversationId,
     })
     .execute();
-}
-
-function decodeStreamChunk(chunk: Uint8Array<ArrayBufferLike> | string) {
-  let text: string;
-  if (typeof chunk === 'string') {
-    text = chunk;
-  } else {
-    text = new TextDecoder().decode(chunk);
-  }
-  try {
-    // we can receive multiple events in a single chunk, so we need to split them
-    const lines = text.split(/\n+/);
-    const tokens: string[] = [];
-    for (const line of lines) {
-      const cleanedLine = line.replace(/data:/, '').replace(/\n+/g, '');
-      if (line.trim().length === 0) {
-        continue;
-      }
-      tokens.push(cleanedLine);
-    }
-    return tokens;
-  } catch (e) {
-    console.error('Error decoding stream chunk', e);
-    throw e;
-  }
 }
 
 /**

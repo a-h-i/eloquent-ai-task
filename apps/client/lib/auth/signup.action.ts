@@ -8,6 +8,7 @@ import { registrationSchema } from '@/lib/schemas/registration.schema';
 interface SignupActionProps {
   username: string;
   password: string;
+  confirm: string;
   name: string;
 }
 
