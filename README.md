@@ -10,7 +10,6 @@ This is a monorepo. It has two main applications
 
 It also has
 - `apps/migrator`: a script for migrating the database
-- `apps/deploy`: pulumi IaC for deploying the application
 
 
 
