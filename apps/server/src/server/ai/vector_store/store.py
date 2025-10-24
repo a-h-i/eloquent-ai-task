@@ -10,7 +10,7 @@ COLLECTION_NAME = "fintech_faq_llama2_pgvector"
 
 
 def _get_embeddings():
-    return OllamaEmbeddings(model="llama2", base_url=settings.OLLAMA_HOST)
+    return OllamaEmbeddings(model="nomic-embed-text", base_url=settings.OLLAMA_HOST)
 
 
 def _ensure_pgvector_extension(engine: Engine):
