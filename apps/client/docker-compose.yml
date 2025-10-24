@@ -23,7 +23,7 @@ services:
       timeout: 5s
     shm_size: 1gb
   ai-db:
-    image: postgres:18
+    image: pgvector/pgvector:pg18
     command: postgres -c work_mem=8000
     restart: always
     environment:

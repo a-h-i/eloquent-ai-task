@@ -5,7 +5,7 @@ services:
       dockerfile: Dockerfile.testing
     image: eloquent-image
   ai-db:
-    image: postgres:18
+    image: pgvector/pgvector:pg18
     command: postgres -c work_mem=8000
     restart: always
     environment:
